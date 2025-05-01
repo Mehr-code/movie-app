@@ -1,4 +1,4 @@
-const API_KEY = "38cd68fbdc26b9959663a40873490d8d";
+
 const BASE_URL = "https://api.themoviedb.org/3";
 
 //http://www.omdbapi.com/?i=tt3896198&apikey=97543f03
