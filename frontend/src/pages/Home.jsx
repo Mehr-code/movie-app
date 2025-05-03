@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { getPopularMovies } from "../services/api";
+import { getPopularMovies, searchMovies } from "../services/api";
 import MovieCard from "../components/MovieCard";
 import "../css/Home.css";
 
@@ -15,7 +15,7 @@ function Home() {
         const popularMovie = await getPopularMovies();
         setMovies(popularMovie);
       } catch (err) {
-        // console.log(err);
+        console.log(err);
         setError("مشکلی در دریافت داده ی فیلم ها پیش آمده");
       } finally {
         setLoading(false);
@@ -24,11 +24,21 @@ function Home() {
     loadPopularMovies();
   }, []);
 
-  const handleSearch = (e) => {
+  const handleSearch = async (e) => {
     e.preventDefault();
-    alert(searchQuery);
-    setSearchQuery("");
-    return true;
+    if (!searchQuery.trim()) return;
+    if (loading) return;
+    setLoading(true);
+    try {
+      const searchResults = await searchMovies(searchQuery);
+      setMovies(searchResults);
+      setError(null);
+    } catch (error) {
+      console.log(error);
+      setError("خطایی در جستجوی فیلم ها پیش آمده");
+    } finally {
+      setLoading(false);
+    }
   };
 
   return (
@@ -46,17 +56,21 @@ function Home() {
           جستجو
         </button>
       </form>
-
-      <div className="movies-grid">
-        {movies.map(
-          (movie) =>
-            movie.title
-              .toLocaleLowerCase()
-              .startsWith(searchQuery.toLocaleLowerCase()) && (
-              <MovieCard movie={movie} key={movie.id} />
-            )
-        )}
-      </div>
+      {erorr && <div className="error-message">{erorr}</div>}
+      {loading ? (
+        <div className="loading">در حال برقراری ارتباط...</div>
+      ) : (
+        <div className="movies-grid">
+          {movies.map(
+            (movie) =>
+              movie.title
+                .toLocaleLowerCase()
+                .startsWith(searchQuery.toLocaleLowerCase()) && (
+                <MovieCard movie={movie} key={movie.id} />
+              )
+          )}
+        </div>
+      )}
     </div>
   );
 }
