@@ -111,4 +111,5 @@ The frontend will be available at `http://localhost:5173` and will proxy API req
 
 This project is licensed under the **ISC License**.
 
-```
+
+
